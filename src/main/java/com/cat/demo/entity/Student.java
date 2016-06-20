@@ -1,15 +1,19 @@
 package com.cat.demo.entity;
 
 import com.cat.demo.annotation.Column;
+import com.cat.demo.annotation.Id;
 import com.cat.demo.annotation.Table;
 
 @Table
 public class Student {
-	@Column("sid")
+
+	@Id("sid")
 	private int id;
-	@Column
+
+	@Column("sname")
 	private String name;
-	@Column
+
+	@Column("sscore")
 	private double score;
 
 	public int getId() {
@@ -34,6 +38,11 @@ public class Student {
 
 	public void setScore(double score) {
 		this.score = score;
+	}
+
+	@Override
+	public String toString() {
+		return "Student [id=" + id + ", name=" + name + ", score=" + score + "]";
 	}
 
 }

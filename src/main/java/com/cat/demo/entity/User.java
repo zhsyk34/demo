@@ -4,18 +4,19 @@ package com.cat.demo.entity;
 import com.cat.demo.annotation.Column;
 import com.cat.demo.annotation.Id;
 import com.cat.demo.annotation.Table;
-import com.jfinal.plugin.activerecord.Model;
 
-@SuppressWarnings("serial")
 @Table
-public class User extends Model<User> {
+public class User {
 
 	@Id
 	private int id;
+
 	@Column
 	private String name;
+
 	@Column
 	private int age;
+
 	@Column
 	private String address;
 
@@ -51,19 +52,9 @@ public class User extends Model<User> {
 		this.address = address;
 	}
 
-	/**
-	 * 
-	 */
 	public User() {
-		super();
 	}
 
-	/**
-	 * @param id
-	 * @param name
-	 * @param age
-	 * @param address
-	 */
 	public User(String name, int age, String address) {
 		this.name = name;
 		this.age = age;

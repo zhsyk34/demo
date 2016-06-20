@@ -3,31 +3,27 @@ package com.cat.demo.util;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.cat.demo.annotation.Column;
 import com.cat.demo.annotation.Id;
 import com.cat.demo.annotation.Table;
-import com.cat.demo.entity.Student;
-import com.cat.demo.entity.User;
-import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
-import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
-import com.jfinal.plugin.c3p0.C3p0Plugin;
 
-public final class ParseAnnotation {
+public final class ParseMapping {
 
-	private final static Map<Class<?>, String> classTableMap = new HashMap<>();
-	private final static Map<Class<?>, Map<String, String>> classFieldIdMap = new HashMap<>();
-	private final static Map<Class<?>, Map<String, String>> classFieldColumnMap = new HashMap<>();
+	public final static Map<Class<?>, String> classTableMap = new HashMap<>();
+	public final static Map<Class<?>, Map<String, String>> classFieldIdMap = new HashMap<>();
+	public final static Map<Class<?>, Map<String, String>> classFieldColumnMap = new HashMap<>();
 
-	private static void parse(Class<?>[] clazzs) {
+	public static void parseAnnotation(Class<?>[] clazzs) {
 		for (Class<?> clazz : clazzs) {
-			mapping(clazz);
+			parseAnnotation(clazz);
 		}
 	}
 
-	private static void mapping(Class<?> clazz) {
+	public static void parseAnnotation(Class<?> clazz) {
 		// 1.class->table
 		Table table = clazz.getAnnotation(Table.class);
 		if (table == null) {
@@ -38,7 +34,6 @@ public final class ParseAnnotation {
 		if (Tools.isEmpty(tableName)) {
 			tableName = Tools.firstToLower(clazz.getSimpleName());
 		}
-		System.out.println("table : " + tableName);
 		classTableMap.put(clazz, tableName);
 
 		// 2.field->column
@@ -56,7 +51,6 @@ public final class ParseAnnotation {
 				if (Tools.isEmpty(idName)) {
 					idName = Tools.firstToLower(filedName);
 				}
-				System.out.println("\tid : " + idName);
 				fieldIdMap.put(filedName, idName);
 				fieldColumnMap.put(filedName, idName);
 				continue;
@@ -70,17 +64,36 @@ public final class ParseAnnotation {
 					columnName = Tools.firstToLower(filedName);
 				}
 				fieldColumnMap.put(filedName, columnName);
-				System.out.println("\tcolumn : " + columnName);
 			}
 		}
 		classFieldIdMap.put(clazz, fieldIdMap);
 		classFieldColumnMap.put(clazz, fieldColumnMap);
 	}
 
-	public static void load(/* ActiveRecordPlugin arp */) {
-		Class<?>[] clazzs = new Class[] { User.class, Student.class };// TODO
-		parse(clazzs);
-		// Db模式无需记载...?
+	public static void parsePackage(String packageName) {
+		List<Class<?>> classes = ScanClass.getClasses("com.cat.demo.model");
+		for (Class<?> clazz : classes) {
+			// 1.table
+			classTableMap.put(clazz, clazz.getSimpleName());
+			// 2.field->column
+			Map<String, String> fieldIdMap = new HashMap<>();
+			Map<String, String> fieldColumnMap = new HashMap<>();
+
+			fieldIdMap.put("id", "id");// TODO 粗糙处理,默认id
+			Field[] fields = clazz.getDeclaredFields();
+			for (Field field : fields) {
+				String filedName = field.getName();
+				fieldColumnMap.put(filedName, filedName);
+			}
+			classFieldIdMap.put(clazz, fieldIdMap);
+			classFieldColumnMap.put(clazz, fieldColumnMap);
+		}
+	}
+
+	public static void load() {
+
+		// Db模式无需载入...
+
 		// classTableMap.forEach((c, t) -> {
 		// Map<String, String> fieldIdMap = classFieldIdMap.get(c);
 		// if (fieldIdMap.isEmpty()) {
@@ -93,15 +106,16 @@ public final class ParseAnnotation {
 		// });
 	}
 
-	public static <Entity> Record toRecord(Entity entity) {
+	public static <Entity> Record toRecord(Entity entity, boolean skipPK) {
 		Record record = new Record();
 		Class<?> clazz = entity.getClass();
 		if (!classTableMap.containsKey(clazz)) {
 			System.out.println("未映射表...");
-			return null;
+			return record;
 		}
 		// String tableName = classTableMap.get(clazz);
 		Map<String, String> fieldColumnMap = classFieldColumnMap.get(clazz);
+		Map<String, String> fieldIdMap = classFieldIdMap.get(clazz);
 		System.out.println("columns size:" + fieldColumnMap.size());
 		if (fieldColumnMap.isEmpty()) {
 			System.out.println("无映射字段...");
@@ -114,8 +128,16 @@ public final class ParseAnnotation {
 				Method method = clazz.getMethod(getMethodName);
 				// Class<?> returnType = method.getReturnType();//TODO
 				Object value = method.invoke(entity);
-				System.out.println("data: " + field + " , " + value);
-				record.set(column, value);
+				// System.out.println("data: " + field + " , " + value);
+				if (fieldIdMap.containsKey(field) && skipPK) {
+
+					System.out.println("pk : " + value);
+					if (value == null) {
+						System.out.println("没有主键...");// TODO
+					}
+				} else {
+					record.set(column, value);
+				}
 			} catch (Exception e) {
 				System.out.println(field + "没有对应的get方法");
 				e.printStackTrace();
@@ -126,39 +148,31 @@ public final class ParseAnnotation {
 	}
 
 	public static <Entity> Entity toEntity(Record record, Class<Entity> clazz) {
+		Map<String, String> fieldColumnMap = classFieldColumnMap.get(clazz);
 		Map<String, Object> map = record.getColumns();
-		map.forEach((k, v) -> {
 
-		});
-		return null;
+		Entity entity;
+		try {
+			entity = (Entity) clazz.newInstance();
+			map.forEach((k, v) -> {
+				fieldColumnMap.forEach((f, c) -> {
+					if (k.equals(c)) {
+						try {
+							Field field = clazz.getDeclaredField(f);
+							field.setAccessible(true);
+							field.set(entity, v);
+						} catch (Exception e) {
+							e.printStackTrace();
+							throw new RuntimeException("...");
+						}
+					}
+				});
+			});
+			return entity;
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new RuntimeException("初始化对象失败...");
+		}
+
 	}
 
-	public static void main(String[] args) {
-		C3p0Plugin cp = new C3p0Plugin("jdbc:mysql://localhost/test", "root", "root");
-		cp.start();
-
-		ActiveRecordPlugin arp = new ActiveRecordPlugin(cp);
-		arp.start();
-
-		load();
-
-		Record r = new Record().set("id", 1).set("age", 33).set("name", "zhsy");
-		User user = toEntity(r, User.class);
-		System.out.println(user);
-		arp.stop();
-
-	}
-
-	public static void testSave() {
-		Student student = new Student();
-		student.setId(47);
-		student.setName("none");
-		student.setScore(123);
-		Record r = toRecord(student);
-
-		System.out.println(r.getColumns().get("id"));
-		System.out.println(r.getColumns().get("name"));
-
-		Db.save("student", r);
-	}
 }
