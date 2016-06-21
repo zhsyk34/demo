@@ -21,7 +21,7 @@ public class Validate {
 		ActiveRecordPlugin arp = new ActiveRecordPlugin(cp);
 		arp.start();
 
-		ParseMapping.load();
+		ParseMapping.load(arp);
 
 		test1();
 		arp.stop();

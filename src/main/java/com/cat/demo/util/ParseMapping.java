@@ -9,6 +9,7 @@ import java.util.Map;
 import com.cat.demo.annotation.Column;
 import com.cat.demo.annotation.Id;
 import com.cat.demo.annotation.Table;
+import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.jfinal.plugin.activerecord.Record;
 
 public final class ParseMapping {
@@ -90,8 +91,7 @@ public final class ParseMapping {
 		}
 	}
 
-	public static void load() {
-
+	public static void load(ActiveRecordPlugin arp) {
 		// Db模式无需载入...
 
 		// classTableMap.forEach((c, t) -> {
