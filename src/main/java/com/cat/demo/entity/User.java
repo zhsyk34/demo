@@ -8,32 +8,32 @@ import com.cat.demo.annotation.Table;
 @Table
 public class User {
 
-	@Id
-	private int id;
+	@Id("uuid")
+	private int uid;
 
-	@Column
-	private String name;
+	@Column("name")
+	private String n;
 
 	@Column
 	private int age;
 
-	@Column
-	private String address;
+	@Column("address")
+	private String addr;
 
-	public int getId() {
-		return id;
+	public int getUid() {
+		return uid;
 	}
 
-	public void setId(int id) {
-		this.id = id;
+	public void setUid(int uid) {
+		this.uid = uid;
 	}
 
-	public String getName() {
-		return name;
+	public String getN() {
+		return n;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setN(String n) {
+		this.n = n;
 	}
 
 	public int getAge() {
@@ -44,26 +44,17 @@ public class User {
 		this.age = age;
 	}
 
-	public String getAddress() {
-		return address;
+	public String getAddr() {
+		return addr;
 	}
 
-	public void setAddress(String address) {
-		this.address = address;
-	}
-
-	public User() {
-	}
-
-	public User(String name, int age, String address) {
-		this.name = name;
-		this.age = age;
-		this.address = address;
+	public void setAddr(String addr) {
+		this.addr = addr;
 	}
 
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", name=" + name + ", age=" + age + ", address=" + address + "]";
+		return "User [uid=" + uid + ", n=" + n + ", age=" + age + ", addr=" + addr + "]";
 	}
 
 }

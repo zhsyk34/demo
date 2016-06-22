@@ -20,8 +20,6 @@ public class ScanClass {
 	public static List<Class<?>> getClasses(String packageName, boolean recursive) {
 		List<Class<?>> classes = new ArrayList<>();
 
-		recursive = true;
-
 		String dirName = packageName.replace(".", "/");
 
 		Enumeration<URL> urls = null;
@@ -33,7 +31,7 @@ public class ScanClass {
 		while (urls.hasMoreElements()) {
 			URL url = urls.nextElement();
 			String protocol = url.getProtocol();
-			if ("file".equals(protocol)) {// file
+			if ("file".equals(protocol)) {
 				String filePath = url.getFile();// URLDecoder.decode(url.getFile(),"UTF-8");
 				add(packageName, filePath, recursive, classes);
 			}
