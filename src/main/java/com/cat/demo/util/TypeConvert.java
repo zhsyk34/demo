@@ -5,21 +5,12 @@ import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-public class TypeConvertUtil {
+public class TypeConvert {
 
 	private static final String TIMEPATTERN = "yyyy-MM-dd HH:mm:ss";
 	private static final String DATEPATTERN = "yyyy-MM-dd";
 
-	public static Object convert(Class<?> type, Object obj) throws ParseException {
-		if (obj.getClass() == type) {
-			return obj;
-		}
-
-		if (!(obj instanceof String)) {
-
-		}
-		String str = (String) obj;
-
+	public static Object convert(Class<?> type, String str) throws ParseException {
 		if (type == String.class) {
 			return str == null ? null : str.trim();// 去除空白...
 		}

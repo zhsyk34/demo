@@ -59,7 +59,7 @@ public class InjectUtil {
 			String field = Tools.firstToLower(methodName.substring(3));
 			if (map.containsKey(field)) {
 				try {
-					Object value = TypeConvertUtil.convert(types[0], map.get(field));// TODO
+					Object value = TypeConvert.convert(types[0], map.get(field));// TODO
 					method.invoke(bean, value);
 				} catch (Exception e) {
 					if (!skipError) {

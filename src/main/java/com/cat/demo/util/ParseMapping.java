@@ -42,6 +42,12 @@ public final class ParseMapping {
 		return result.toString().replaceAll(",$", "");
 	}
 
+	public static void parseAnnotation(List<Class<?>> clazzs) {
+		for (Class<?> clazz : clazzs) {
+			parseAnnotation(clazz);
+		}
+	}
+
 	public static void parseAnnotation(Class<?>[] clazzs) {
 		for (Class<?> clazz : clazzs) {
 			parseAnnotation(clazz);

@@ -1,7 +1,12 @@
 package com.cat.demo.config;
 
+import java.util.List;
+
 import com.cat.demo.controller.HouseController;
 import com.cat.demo.entity.House;
+import com.cat.demo.interceptor.PropertyInterceptor;
+import com.cat.demo.util.ParseMapping;
+import com.cat.demo.util.ScanClass;
 import com.jfinal.config.Constants;
 import com.jfinal.config.Handlers;
 import com.jfinal.config.Interceptors;
@@ -34,14 +39,19 @@ public class InitConfig extends JFinalConfig {
 
 	@Override
 	public void configInterceptor(Interceptors me) {
-		// TODO Auto-generated method stub
-
+		me.add(new PropertyInterceptor());
 	}
 
 	@Override
 	public void configHandler(Handlers me) {
-		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void afterJFinalStart() {
+		// 扫描包下的类并注册映射关系...
+		List<Class<?>> clazzs = ScanClass.getClasses("com.cat.demo.entity");
+		ParseMapping.parseAnnotation(clazzs);
 	}
 
 }

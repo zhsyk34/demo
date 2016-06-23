@@ -4,8 +4,11 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>index</title>
+<base href="<%=request.getContextPath() + "/"%>">
 </head>
 <body>
-	<div>House?</div>
+	<ul>
+		<li><a href="house/index">房屋首页</a></li>
+	</ul>
 </body>
 </html>

@@ -1,20 +1,34 @@
 package com.cat.demo.controller;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.cat.demo.entity.Stu;
+import com.cat.demo.entity.User;
 
-import com.jfinal.core.Controller;
+public class HouseController extends BaseController {
 
-public class HouseController extends Controller {
+	protected int id;
+
+	protected String name;
+
+	protected int age;
+
+	protected User user;
+
+	protected Stu stu;
 
 	public void index() {
-		renderText("I am angry.");
+		System.out.println("house index");
+		renderJsp("/house/house.jsp");
 	}
 
 	public void add() {
-		Map<String, Object> map = new HashMap<>();
-		map.put("name", "zhsy");
-		map.put("age", 32);
-		renderJson(map);
+		boolean flag = stuDao.save(stu);
+		System.out.println(flag);
+		System.out.println("action model : " + stu);
+		render(stu);
+	}
+
+	public void list() {
+		stu = stuDao.find(8);
+		render(stu);
 	}
 }

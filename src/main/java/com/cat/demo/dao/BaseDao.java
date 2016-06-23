@@ -17,10 +17,10 @@ public class BaseDao<Entity> {
 	@SuppressWarnings("unchecked")
 	public BaseDao() {
 		entityClass = (Class<Entity>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-		this.hasMapping = ParseMapping.classTableMap.containsKey(entityClass);
-		if (this.hasMapping) {
-			this.tableName = ParseMapping.getTable(entityClass);
-			this.primaryKey = ParseMapping.getId(entityClass);
+		hasMapping = ParseMapping.classTableMap.containsKey(entityClass);
+		if (hasMapping) {
+			tableName = ParseMapping.getTable(entityClass);
+			primaryKey = ParseMapping.getId(entityClass);
 		} else {
 			throw new RuntimeException(entityClass.getSimpleName() + "未映射...");
 		}
@@ -60,6 +60,9 @@ public class BaseDao<Entity> {
 
 	public int count() {
 		return Db.queryLong("select count(1) from " + tableName).intValue();
+
+		// return Db.queryBigDecimal("select count(1) from " +
+		// tableName).intValue();// oracle
 	}
 
 }
