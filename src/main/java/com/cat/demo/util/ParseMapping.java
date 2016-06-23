@@ -261,7 +261,7 @@ public final class ParseMapping {
 				Object value = record.get(idName);
 				System.out.println("加载主键:" + idName + ":" + value);
 				if (value.getClass() != type) {
-					value = TypeConverter.convert(value, type);
+					value = TypeConverter.convert(value, type);// TODO 完善类型转换...
 				}
 
 				field.set(entity, value);

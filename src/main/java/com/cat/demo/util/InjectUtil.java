@@ -4,7 +4,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-//
 public class InjectUtil {
 
 	public final static InjectUtil me = new InjectUtil();

@@ -50,12 +50,10 @@ public class ScanClass {
 				return (recursive && file.isDirectory()) || (file.getName().endsWith(".class"));
 			}
 		});
-		// 循环所有文件
 		for (File file : files) {
-			if (file.isDirectory()) {// 目录继续扫描
+			if (file.isDirectory()) {
 				add(packageName + "." + file.getName(), file.getAbsolutePath(), recursive, classes);
 			} else {
-				// 类名
 				String className = file.getName().replaceAll(".class$", "");
 				try {
 					classes.add(Class.forName(packageName + "." + className));

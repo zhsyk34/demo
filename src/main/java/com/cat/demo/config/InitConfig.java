@@ -3,7 +3,6 @@ package com.cat.demo.config;
 import java.util.List;
 
 import com.cat.demo.controller.HouseController;
-import com.cat.demo.entity.House;
 import com.cat.demo.interceptor.PropertyInterceptor;
 import com.cat.demo.util.ParseMapping;
 import com.cat.demo.util.ScanClass;
@@ -33,7 +32,8 @@ public class InitConfig extends JFinalConfig {
 		C3p0Plugin cp = new C3p0Plugin("jdbc:mysql://localhost/test", "root", "root");
 		me.add(cp);
 		ActiveRecordPlugin arp = new ActiveRecordPlugin(cp);
-		arp.addMapping("house", House.class);
+		// TODO controller mapping...
+		// arp.addMapping("house", House.class);
 		me.add(arp);
 	}
 
